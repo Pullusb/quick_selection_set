@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-0.1.0
 
-- added: initial commit
+1.0.0
+
+- added: Quick selection set in pose bone

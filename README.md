@@ -1,23 +1,31 @@
-# PROJNAME
+# Quick selection set
 
-PROJdesc
+Add quick selection set shortcuts in armature pose mode
 
-<!-- /!\ Alpha, work in progress -->
+**[Download latest](https://github.com/Pullusb/quick_selection_set/archive/refs/heads/main.zip)**
 
-**[Download latest](https://github.com/Pullusb/REPO_NAME/archive/master.zip)**
-
-<!-- ### [Demo Youtube]() -->
-
----  
+---
 
 ## Description
 
-Quick usage description
+**Quick selection set**
 
-**tool action** : `SHORTCUT`
+Use combination of shortcut to super quickly associate a top row key number with current pose-bone selection.  
+
+Pressing this button will select this bone and deselect the rest (keep current selection with added `Shift`).
+
+Useful to quicly jump back and forth on pose bones when adjusting parts of a character/props animation.
+
+## Shortcuts
+
+`Alt + [1-4]` : Store quick Set  
+`[1-4]` : Select quick Set  
+`Shift + [1-4]` : Additive Select quick Set  
 
 
-### Where ?
+To handle the selection set, a scene property is stored per `scene` and per `armature`  
+That way the association stay in the file.
 
-Where is the stuff in UI or shortcut
-
+<!-- # Possible upgrade:
+ - Display buttons in interface ?
+ - Toggle affect (only active / multiselect) with "Alt + 0" ? ->  "group mode" -->
