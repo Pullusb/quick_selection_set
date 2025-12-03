@@ -269,6 +269,8 @@ class QUICKSELECTIONSET_prefs(bpy.types.AddonPreferences):
             op = col.operator("quickselectionset.toggle_keymap", text=f'{"Disable" if kmi.active else "Enable"} {ktype}', icon='CHECKBOX_HLT' if kmi.active else 'CHECKBOX_DEHLT')
             op.enable = kmi.active
             op.key_type = kmi.type
+    
+        return
 
 addon_keymaps = []
 
