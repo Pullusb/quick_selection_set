@@ -18,13 +18,18 @@ Useful to quicly jump back and forth on pose bones when adjusting parts of a cha
 
 ## Shortcuts
 
-`Alt + [1-4]` : Store quick Set  
-`[1-4]` : Select quick Set  
-`Shift + [1-4]` : Additive Select quick Set  
+`Alt + [1-9]` : Store quick Set  
+`[1-9]` : Select quick Set  
+`Shift + [1-9]` : Additive Select quick Set  
 
 
 To handle the selection set, a scene property is stored per `scene` and per `armature`  
 That way the association stay in the file.
+
+
+## Preferences
+
+The are buttons in addon preferences to enable/disable quick selection sets per key (allowing user to use some keys for something else)
 
 <!-- # Possible upgrade:
  - Display buttons in interface ?

@@ -4,9 +4,9 @@ bl_info = {
     "name": "Quick selection set",
     "description": "Add quick selection set shortcuts in armature pose mode",
     "author": "Samuel Bernou",
-    "version": (1, 0, 0),
+    "version": (1, 1, 0),
     "blender": (3, 5, 1),
-    "location": "Armature pose mode Alt (set) / Shift (extend) / [1-4] (select)",
+    "location": "Armature pose mode Alt (set) / Shift (extend) / [1-9] (select)",
     "warning": "To try it is to adopt it",
     "doc_url": "https://github.com/Pullusb/quick_selection_set",
     "tracker_url": "https://github.com/Pullusb/quick_selection_set/issues",
@@ -14,13 +14,15 @@ bl_info = {
 }
 
 import bpy
+from rna_keymap_ui import draw_km, draw_kmi
+
 
 ## ** Quick selection set **
 # Scene property stored per Scene and per rig
 # ---
-# Alt + [1-4] Store quick Set
-# [1-4] Select quick Set
-# Shift + [1-4] Additive Select quick Set
+# Alt + [1-9] Store quick Set
+# [1-9] Select quick Set
+# Shift + [1-9] Additive Select quick Set
 
 ### Possible upgrade:
 ## - Display buttons in interface ?
@@ -191,6 +193,83 @@ class ARMATURE_OT_quick_bone_select_apply(bpy.types.Operator):
             self.report({'WARNING'}, 'No selectable bones with this set')
         return {"FINISHED"}
 
+class QUICKSELECTIONSET_OT_toggle_keymap(bpy.types.Operator):
+    bl_idname = "quickselectionset.toggle_keymap"
+    bl_label = "Toggle Quick Selection Set Keymap"
+    bl_description = "Enable/Disable Quick Selection Set Keymap"
+    bl_options = {"REGISTER"}
+
+    enable : bpy.props.BoolProperty(
+        name="Enable Keymap",
+        description="Enable the quick selection set keymap",
+        default=False,
+        options={"SKIP_SAVE"},
+    )
+
+    key_type : bpy.props.StringProperty(
+        name="Key Type",
+        description="Type of the keymap entry",
+        default="",
+        options={"SKIP_SAVE"},
+    )
+
+    # def invoke(self, context, event):
+    #     return self.execute(context)
+
+    def execute(self, context):
+        kc = bpy.context.window_manager.keyconfigs.user
+        user_keymaps = kc.keymaps
+        km = user_keymaps.get('Pose') # limit to paint mode
+        for kmi in reversed(km.keymap_items):
+            if kmi.idname in ['pose.quick_bone_select_store', 'pose.quick_bone_select_apply']:
+                if kmi.type == self.key_type:
+                    kmi.active = not self.enable
+
+        return {"FINISHED"}
+
+
+class QUICKSELECTIONSET_prefs(bpy.types.AddonPreferences):
+    bl_idname = __package__
+
+    enable_reports: bpy.props.BoolProperty(
+        name="Enable Reports",
+        description="Show informational reports when storing/applying selection sets",
+        default=True,
+    )
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        # layout.prop(self, "enable_reports")
+        col = layout.column()
+
+        key_to_num = {
+            'ZERO': '0',
+            'ONE': '1',
+            'TWO': '2',
+            'THREE': '3',
+            'FOUR': '4',
+            'FIVE': '5',
+            'SIX': '6',
+            'SEVEN': '7',
+            'EIGHT': '8',
+            'NINE': '9',
+        }
+        
+        kc = bpy.context.window_manager.keyconfigs.user
+        user_keymaps = kc.keymaps
+        km = user_keymaps.get('Pose') # limit to paint mode
+        ## get state:
+        # for kmi in km.keymap_items:
+        for kmi in reversed(km.keymap_items):
+            if kmi.idname != 'pose.quick_bone_select_store':
+                continue
+            ktype = key_to_num[kmi.type] if kmi.type in key_to_num.keys() else kmi.type
+            op = col.operator("quickselectionset.toggle_keymap", text=f'{"Disable" if kmi.active else "Enable"} {ktype}', icon='CHECKBOX_HLT' if kmi.active else 'CHECKBOX_DEHLT')
+            op.enable = kmi.active
+            op.key_type = kmi.type
+
 addon_keymaps = []
 
 def register_keymap():
@@ -201,8 +280,7 @@ def register_keymap():
 
     km = addon.keymaps.new(name="Pose", space_type="EMPTY")
 
-    ## Only four first keys are easily reachable and remembering more is probably difficult,
-    for key in ['ONE', 'TWO', 'THREE', 'FOUR']: # ,'FIVE' ,'SIX' ,'SEVEN' ,'HEIGHT' ,'NINE', 'ZERO'
+    for key in ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE' ,'SIX' ,'SEVEN' ,'EIGHT', 'NINE']: # , 'ZERO'
         kmi = km.keymap_items.new('pose.quick_bone_select_store', type=key, value='PRESS', alt=True) # Store
         kmi = km.keymap_items.new('pose.quick_bone_select_apply', type=key, value='PRESS') # Apply
         kmi = km.keymap_items.new('pose.quick_bone_select_apply', type=key, value='PRESS', shift=True) # Apply extend
@@ -219,6 +297,8 @@ def unregister_keymap():
 classes=(
 ARMATURE_OT_quick_bone_select_store,
 ARMATURE_OT_quick_bone_select_apply,
+QUICKSELECTIONSET_OT_toggle_keymap,
+QUICKSELECTIONSET_prefs,
 )
 
 def register():
