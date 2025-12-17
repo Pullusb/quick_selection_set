@@ -4,7 +4,7 @@ bl_info = {
     "name": "Quick selection set",
     "description": "Add quick selection set shortcuts in armature pose mode",
     "author": "Samuel Bernou",
-    "version": (1, 1, 0),
+    "version": (2, 0, 0),
     "blender": (3, 5, 1),
     "location": "Armature pose mode Alt (set) / Shift (extend) / [1-9] (select)",
     "warning": "To try it is to adopt it",
@@ -14,8 +14,6 @@ bl_info = {
 }
 
 import bpy
-from rna_keymap_ui import draw_km, draw_kmi
-
 
 ## ** Quick selection set **
 # Scene property stored per Scene and per rig
@@ -27,6 +25,13 @@ from rna_keymap_ui import draw_km, draw_kmi
 ### Possible upgrade:
 ## - Display buttons in interface ?
 ## - Toggle affect (only active / multiselect) with "Alt+0" ? ->  "group mode"
+
+if bpy.app.version >= (5,0,0):
+    def posebone_select(posebone, select=True):
+        posebone.select = select
+else:
+    def posebone_select(posebone, select=True):
+        posebone.bone.select = select
 
 class ARMATURE_OT_quick_bone_select_store(bpy.types.Operator):
     bl_idname = "pose.quick_bone_select_store"
@@ -77,13 +82,12 @@ class ARMATURE_OT_quick_bone_select_store(bpy.types.Operator):
 
         ct = 0
         for o in scope:
-            pose_l = []
+            if bpy.app.version >= (5,0,0):
+                pose_l = [pb.name for pb in o.pose.bones if pb.select]
+            else:
+                pose_l = [pb.name for pb in o.pose.bones if pb.bone.select]
 
-            for b in o.pose.bones:
-                if b.bone.select:
-                    pose_l.append(b.name)
-                    ct += 1
-
+            ct += len(pose_l)
             ## if nothing selected... leave untouched
             if pose_l:
                 slot_name = f'quick_set_{o.name}_{self.key}'
@@ -135,7 +139,7 @@ class ARMATURE_OT_quick_bone_select_apply(bpy.types.Operator):
                 for arm in context.objects_in_mode_unique_data:
                     if arm.name == arm_name:
                         if (b := arm.pose.bones.get(name)):
-                            b.bone.select = True
+                            posebone_select(b, True)
                             ct += 1
                             break
 
@@ -144,7 +148,7 @@ class ARMATURE_OT_quick_bone_select_apply(bpy.types.Operator):
                 # single name
                 # if (b := context.pose_object.pose.bones.get(name)):
                 if (b := context.object.pose.bones.get(name)):
-                    b.bone.select = True
+                    posebone_select(b, True)
                     ct += 1
 
         if not ct:
@@ -172,12 +176,12 @@ class ARMATURE_OT_quick_bone_select_apply(bpy.types.Operator):
             if self.extend:
                 for name in select_set:
                     if (b := context.object.pose.bones.get(name)):
-                        b.bone.select = True
+                        posebone_select(b, True)
                         ct += 1
             else:
                 ct += len(select_set)
                 for b in o.pose.bones:
-                    b.bone.select = b.name in select_set
+                    posebone_select(b, b.name in select_set)
 
         if ct:
             if active_only and not self.extend:
@@ -186,7 +190,7 @@ class ARMATURE_OT_quick_bone_select_apply(bpy.types.Operator):
                 for o in context.objects_in_mode_unique_data:
                     if o != context.object:
                         for b in o.pose.bones:
-                            b.bone.select = False
+                            posebone_select(b, False)
 
             self.report({'INFO'}, f'{ct} bone selected')
         else:

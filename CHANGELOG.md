@@ -4,6 +4,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+2.0.0
+
+- added: update to Blender 5.0 with retrocompatibility
 
 1.1.0
 
