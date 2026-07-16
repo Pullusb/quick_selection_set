@@ -10,7 +10,7 @@ Add quick selection set shortcuts in armature pose mode
 
 **Quick selection set**
 
-Use combination of shortcut to super quickly associate a top row key number with current pose-bone selection.  
+Use combination of shortcut to super quickly associate a top row key number with current pose-bone selection by pressing `Alt` and the number.  
 
 Pressing this button will select this bone and deselect the rest (keep current selection with added `Shift`).
 
@@ -18,7 +18,7 @@ Useful to quicly jump back and forth on pose bones when adjusting parts of a cha
 
 ## Shortcuts
 
-`Alt + [1-9]` : Store quick Set  
+`Alt + [1-9]` : Assign quick Set  
 `[1-9]` : Select quick Set  
 `Shift + [1-9]` : Additive Select quick Set  
 
@@ -29,7 +29,8 @@ That way the association stay in the file.
 
 ## Preferences
 
-The are buttons in addon preferences to enable/disable quick selection sets per key (allowing user to use some keys for something else)
+There are buttons in addon preferences to disable _quick selection sets_ per key.  
+This allow to free those number keys for other uses (user defined shortcuts, other addons addon shortcut, etc).
 
 <!-- # Possible upgrade:
  - Display buttons in interface ?

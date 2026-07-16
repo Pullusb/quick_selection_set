@@ -22,10 +22,6 @@ import bpy
 # [1-9] Select quick Set
 # Shift + [1-9] Additive Select quick Set
 
-### Possible upgrade:
-## - Display buttons in interface ?
-## - Toggle affect (only active / multiselect) with "Alt+0" ? ->  "group mode"
-
 if bpy.app.version >= (5,0,0):
     def posebone_select(posebone, select=True):
         posebone.select = select
